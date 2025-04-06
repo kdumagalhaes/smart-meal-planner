@@ -1,25 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
+import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 export default function PreferencesPage() {
-  const router = useRouter();
   const [preferences, setPreferences] = useState({
-    calories: [2000],
+    calories: [1000],
     restrictions: {
       vegetarian: false,
       vegan: false,
       glutenFree: false,
       dairyFree: false,
       nutFree: false,
-    },
-    mealTimes: {
-      breakfast: "08:00",
-      lunch: "13:00",
-      dinner: "19:00",
     },
   });
 
@@ -56,9 +54,6 @@ export default function PreferencesPage() {
       "restrictions",
       JSON.stringify(preferences.restrictions)
     );
-    localStorage.setItem("mealTimes", JSON.stringify(preferences.mealTimes));
-
-    router.push("/meals");
   };
 
   return (
@@ -75,9 +70,66 @@ export default function PreferencesPage() {
         <h1 className="text-3xl font-bold mb-8">Dietary Preferences</h1>
 
         <form onSubmit={handleSave}>
-          <p className="text-center text-sm text-muted-foreground mt-2">
-            Target: {preferences.calories[0]} calories per day
-          </p>
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Daily Calorie Target</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Slider
+                value={preferences.calories}
+                onValueChange={(value) =>
+                  setPreferences((prev) => ({ ...prev, calories: value }))
+                }
+                min={1000}
+                max={4000}
+                step={50}
+                className="w-full"
+              />
+              <p className="text-center text-sm text-muted-foreground mt-2">
+                Target: {preferences.calories[0]} calories per day
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Dietary Restrictions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {Object.entries(preferences.restrictions).map(
+                  ([key, value]) => (
+                    <div
+                      key={key}
+                      className="flex items-center justify-between"
+                    >
+                      <Label htmlFor={key} className="capitalize">
+                        {key.replace(/([A-Z])/g, " $1").trim()}
+                      </Label>
+                      <Switch
+                        id={key}
+                        checked={value}
+                        onCheckedChange={(checked) =>
+                          setPreferences((prev) => ({
+                            ...prev,
+                            restrictions: {
+                              ...prev.restrictions,
+                              [key]: checked,
+                            },
+                          }))
+                        }
+                      />
+                    </div>
+                  )
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Button type="submit" className="w-full">
+            <Save className="w-4 h-4 mr-2" />
+            Save Preferences
+          </Button>
         </form>
       </div>
     </div>
