@@ -16,10 +16,18 @@ export default function MealTabs({ mealTime, isLoading, meal }: MealTabsProps) {
   return (
     <Tabs defaultValue={mealTime} className="mx-auto">
       <TabsList className="grid w-full grid-cols-4">
-        <TabsTrigger value="breakfast">Breakfast</TabsTrigger>
-        <TabsTrigger value="lunch">Lunch</TabsTrigger>
-        <TabsTrigger value="snack">Snack</TabsTrigger>
-        <TabsTrigger value="dinner">Dinner</TabsTrigger>
+        <TabsTrigger value="breakfast" className="cursor-pointer">
+          Breakfast
+        </TabsTrigger>
+        <TabsTrigger value="lunch" className="cursor-pointer">
+          Lunch
+        </TabsTrigger>
+        <TabsTrigger value="snack" className="cursor-pointer">
+          Snack
+        </TabsTrigger>
+        <TabsTrigger value="dinner" className="cursor-pointer">
+          Dinner
+        </TabsTrigger>
       </TabsList>
       {isLoading ? (
         <div className="mx-auto my-12 flex gap-4 align-middle">
