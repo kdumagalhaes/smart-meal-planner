@@ -1,21 +1,38 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
-
-interface Meal {
-  name: string;
-  calories: number;
-  ingredients: string[];
-  instructions: string;
-  nutritionalInfo: {
-    protein: string;
-    carbs: string;
-    fats: string;
-  };
-}
+import { getMealSuggestion } from "../services/meals";
+import { MealRecord, MealTime } from "./constants/meals-constants";
+import MealTabs from "./ui/meal-tabs/meal-tabs";
 
 export default function MealsPage() {
+  const hour = new Date().getHours();
+  const [loading, setLoading] = useState(false);
+  const [meal, setMeal] = useState<MealRecord | null>(null);
+  const [mealTime, setMealTime] = useState<MealTime | null>(null);
+
+  const generateMealSuggestion = async (mealTime: MealTime) => {
+    setMealTime(mealTime);
+    setLoading(true);
+    try {
+      const mealsPerTime = await getMealSuggestion();
+      setMeal(mealsPerTime);
+    } catch (error) {
+      console.error("Error generating meal:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (hour >= 5 && hour < 11) generateMealSuggestion(MealTime.BREAKFAST);
+    else if (hour >= 11 && hour < 16) generateMealSuggestion(MealTime.LUNCH);
+    else if (hour >= 16 && hour < 22) generateMealSuggestion(MealTime.DINNER);
+    else generateMealSuggestion(MealTime.SNACK);
+  }, [hour]);
+
   return (
     <div className="container mx-auto px-4 py-8">
       <Link
@@ -29,10 +46,8 @@ export default function MealsPage() {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold mb-4">Meal Suggestions</h1>
-          <p className="text-muted-foreground"></p>
         </div>
-
-        <div className="text-center mb-8"></div>
+        <MealTabs meal={meal} mealTime={mealTime} isLoading={loading} />
       </div>
     </div>
   );
