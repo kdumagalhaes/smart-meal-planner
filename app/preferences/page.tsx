@@ -3,29 +3,21 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { ArrowLeft, Save } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export default function PreferencesPage() {
-  const router = useRouter();
   const [preferences, setPreferences] = useState({
-    calories: [2000],
+    calories: [1000],
     restrictions: {
       vegetarian: false,
       vegan: false,
       glutenFree: false,
       dairyFree: false,
       nutFree: false,
-    },
-    mealTimes: {
-      breakfast: "08:00",
-      lunch: "13:00",
-      dinner: "19:00",
     },
   });
 
@@ -62,9 +54,6 @@ export default function PreferencesPage() {
       "restrictions",
       JSON.stringify(preferences.restrictions)
     );
-    localStorage.setItem("mealTimes", JSON.stringify(preferences.mealTimes));
-
-    router.push("/meals");
   };
 
   return (
@@ -133,37 +122,6 @@ export default function PreferencesPage() {
                     </div>
                   )
                 )}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Preferred Meal Times</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {Object.entries(preferences.mealTimes).map(([meal, time]) => (
-                  <div key={meal} className="flex items-center gap-4">
-                    <Label htmlFor={meal} className="w-24 capitalize">
-                      {meal}
-                    </Label>
-                    <Input
-                      id={meal}
-                      type="time"
-                      value={time}
-                      onChange={(e) =>
-                        setPreferences((prev) => ({
-                          ...prev,
-                          mealTimes: {
-                            ...prev.mealTimes,
-                            [meal]: e.target.value,
-                          },
-                        }))
-                      }
-                    />
-                  </div>
-                ))}
               </div>
             </CardContent>
           </Card>
