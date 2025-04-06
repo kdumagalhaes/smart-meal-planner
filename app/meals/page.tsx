@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { ArrowLeft, Utensils } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getMealSuggestion, Meal } from "../services/meals";
-import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 enum MealTime {
@@ -15,24 +15,24 @@ enum MealTime {
 }
 
 export default function MealsPage() {
+  const hour = new Date().getHours();
   const [loading, setLoading] = useState(false);
-  const [currentMeal, setCurrentMeal] = useState<Meal | null>(null);
+  const [meal, setMeal] = useState<Record<string, Meal[]> | null>(null);
   const [mealTime, setMealTime] = useState<MealTime>(MealTime.SNACK);
 
   useEffect(() => {
-    const hour = new Date().getHours();
     if (hour >= 5 && hour < 11) generateMealSuggestion(MealTime.BREAKFAST);
     else if (hour >= 11 && hour < 16) generateMealSuggestion(MealTime.LUNCH);
     else if (hour >= 16 && hour < 22) generateMealSuggestion(MealTime.DINNER);
     else generateMealSuggestion(MealTime.SNACK);
-  }, []);
+  }, [hour]);
 
   const generateMealSuggestion = async (mealTime: MealTime) => {
     setMealTime(mealTime);
     setLoading(true);
     try {
-      const meal = await getMealSuggestion(mealTime);
-      setCurrentMeal(meal);
+      const mealsPerTime = await getMealSuggestion();
+      setMeal(mealsPerTime);
     } catch (error) {
       console.error("Error generating meal:", error);
     } finally {
@@ -69,13 +69,13 @@ export default function MealsPage() {
           ) : (
             <>
               <TabsContent value="breakfast">
-                {currentMeal && (
+                {meal !== null && meal["breakfast"] && (
                   <Card className="mb-6">
                     <CardHeader>
                       <CardTitle className="flex items-center justify-between">
-                        <span>{currentMeal.name}</span>
+                        <span>{meal["breakfast"][0].name}</span>
                         <span className="text-muted-foreground text-sm">
-                          {currentMeal.calories} cal
+                          {meal["breakfast"][0].calories} cal
                         </span>
                       </CardTitle>
                     </CardHeader>
@@ -84,9 +84,11 @@ export default function MealsPage() {
                         <div>
                           <h3 className="font-semibold mb-2">Ingredients</h3>
                           <ul className="list-disc list-inside text-muted-foreground">
-                            {currentMeal.ingredients.map((ingredient, i) => (
-                              <li key={i}>{ingredient}</li>
-                            ))}
+                            {meal["breakfast"][0].ingredients.map(
+                              (ingredient, i) => (
+                                <li key={i}>{ingredient}</li>
+                              )
+                            )}
                           </ul>
                         </div>
                         <div>
@@ -99,7 +101,7 @@ export default function MealsPage() {
                                 Protein
                               </p>
                               <p className="font-semibold">
-                                {currentMeal.nutritionalInfo.protein}
+                                {meal["breakfast"][0].nutritionalInfo.protein}
                               </p>
                             </div>
                             <div>
@@ -107,7 +109,7 @@ export default function MealsPage() {
                                 Carbs
                               </p>
                               <p className="font-semibold">
-                                {currentMeal.nutritionalInfo.carbs}
+                                {meal["breakfast"][0].nutritionalInfo.carbs}
                               </p>
                             </div>
                             <div>
@@ -115,7 +117,7 @@ export default function MealsPage() {
                                 Fats
                               </p>
                               <p className="font-semibold">
-                                {currentMeal.nutritionalInfo.fats}
+                                {meal["breakfast"][0].nutritionalInfo.fats}
                               </p>
                             </div>
                           </div>
@@ -124,7 +126,7 @@ export default function MealsPage() {
                       <div className="mt-6">
                         <h3 className="font-semibold mb-2">Instructions</h3>
                         <p className="text-muted-foreground">
-                          {currentMeal.instructions}
+                          {meal["breakfast"][0].instructions}
                         </p>
                       </div>
                     </CardContent>
@@ -132,13 +134,13 @@ export default function MealsPage() {
                 )}
               </TabsContent>
               <TabsContent value="lunch">
-                {currentMeal && (
+                {meal !== null && meal["lunch"] && (
                   <Card className="mb-6">
                     <CardHeader>
                       <CardTitle className="flex items-center justify-between">
-                        <span>{currentMeal.name}</span>
+                        <span>{meal["lunch"][0].name}</span>
                         <span className="text-muted-foreground text-sm">
-                          {currentMeal.calories} cal
+                          {meal["lunch"][0].calories} cal
                         </span>
                       </CardTitle>
                     </CardHeader>
@@ -147,9 +149,11 @@ export default function MealsPage() {
                         <div>
                           <h3 className="font-semibold mb-2">Ingredients</h3>
                           <ul className="list-disc list-inside text-muted-foreground">
-                            {currentMeal.ingredients.map((ingredient, i) => (
-                              <li key={i}>{ingredient}</li>
-                            ))}
+                            {meal["lunch"][0].ingredients.map(
+                              (ingredient, i) => (
+                                <li key={i}>{ingredient}</li>
+                              )
+                            )}
                           </ul>
                         </div>
                         <div>
@@ -162,7 +166,7 @@ export default function MealsPage() {
                                 Protein
                               </p>
                               <p className="font-semibold">
-                                {currentMeal.nutritionalInfo.protein}
+                                {meal["lunch"][0].nutritionalInfo.protein}
                               </p>
                             </div>
                             <div>
@@ -170,7 +174,7 @@ export default function MealsPage() {
                                 Carbs
                               </p>
                               <p className="font-semibold">
-                                {currentMeal.nutritionalInfo.carbs}
+                                {meal["lunch"][0].nutritionalInfo.carbs}
                               </p>
                             </div>
                             <div>
@@ -178,7 +182,7 @@ export default function MealsPage() {
                                 Fats
                               </p>
                               <p className="font-semibold">
-                                {currentMeal.nutritionalInfo.fats}
+                                {meal["lunch"][0].nutritionalInfo.fats}
                               </p>
                             </div>
                           </div>
@@ -187,7 +191,7 @@ export default function MealsPage() {
                       <div className="mt-6">
                         <h3 className="font-semibold mb-2">Instructions</h3>
                         <p className="text-muted-foreground">
-                          {currentMeal.instructions}
+                          {meal["lunch"][0].instructions}
                         </p>
                       </div>
                     </CardContent>
@@ -195,13 +199,13 @@ export default function MealsPage() {
                 )}
               </TabsContent>
               <TabsContent value="snack">
-                {currentMeal && (
+                {meal !== null && meal["snack"] && (
                   <Card className="mb-6">
                     <CardHeader>
                       <CardTitle className="flex items-center justify-between">
-                        <span>{currentMeal.name}</span>
+                        <span>{meal["snack"][0].name}</span>
                         <span className="text-muted-foreground text-sm">
-                          {currentMeal.calories} cal
+                          {meal["snack"][0].calories} cal
                         </span>
                       </CardTitle>
                     </CardHeader>
@@ -210,9 +214,11 @@ export default function MealsPage() {
                         <div>
                           <h3 className="font-semibold mb-2">Ingredients</h3>
                           <ul className="list-disc list-inside text-muted-foreground">
-                            {currentMeal.ingredients.map((ingredient, i) => (
-                              <li key={i}>{ingredient}</li>
-                            ))}
+                            {meal["snack"][0].ingredients.map(
+                              (ingredient, i) => (
+                                <li key={i}>{ingredient}</li>
+                              )
+                            )}
                           </ul>
                         </div>
                         <div>
@@ -225,7 +231,7 @@ export default function MealsPage() {
                                 Protein
                               </p>
                               <p className="font-semibold">
-                                {currentMeal.nutritionalInfo.protein}
+                                {meal["snack"][0].nutritionalInfo.protein}
                               </p>
                             </div>
                             <div>
@@ -233,7 +239,7 @@ export default function MealsPage() {
                                 Carbs
                               </p>
                               <p className="font-semibold">
-                                {currentMeal.nutritionalInfo.carbs}
+                                {meal["snack"][0].nutritionalInfo.carbs}
                               </p>
                             </div>
                             <div>
@@ -241,7 +247,7 @@ export default function MealsPage() {
                                 Fats
                               </p>
                               <p className="font-semibold">
-                                {currentMeal.nutritionalInfo.fats}
+                                {meal["snack"][0].nutritionalInfo.fats}
                               </p>
                             </div>
                           </div>
@@ -250,7 +256,7 @@ export default function MealsPage() {
                       <div className="mt-6">
                         <h3 className="font-semibold mb-2">Instructions</h3>
                         <p className="text-muted-foreground">
-                          {currentMeal.instructions}
+                          {meal["snack"][0].instructions}
                         </p>
                       </div>
                     </CardContent>
@@ -258,13 +264,13 @@ export default function MealsPage() {
                 )}
               </TabsContent>
               <TabsContent value="dinner">
-                {currentMeal && (
+                {meal !== null && meal["dinner"] && (
                   <Card className="mb-6">
                     <CardHeader>
                       <CardTitle className="flex items-center justify-between">
-                        <span>{currentMeal.name}</span>
+                        <span>{meal["dinner"][0].name}</span>
                         <span className="text-muted-foreground text-sm">
-                          {currentMeal.calories} cal
+                          {meal["dinner"][0].calories} cal
                         </span>
                       </CardTitle>
                     </CardHeader>
@@ -273,9 +279,11 @@ export default function MealsPage() {
                         <div>
                           <h3 className="font-semibold mb-2">Ingredients</h3>
                           <ul className="list-disc list-inside text-muted-foreground">
-                            {currentMeal.ingredients.map((ingredient, i) => (
-                              <li key={i}>{ingredient}</li>
-                            ))}
+                            {meal["dinner"][0].ingredients.map(
+                              (ingredient, i) => (
+                                <li key={i}>{ingredient}</li>
+                              )
+                            )}
                           </ul>
                         </div>
                         <div>
@@ -288,7 +296,7 @@ export default function MealsPage() {
                                 Protein
                               </p>
                               <p className="font-semibold">
-                                {currentMeal.nutritionalInfo.protein}
+                                {meal["dinner"][0].nutritionalInfo.protein}
                               </p>
                             </div>
                             <div>
@@ -296,7 +304,7 @@ export default function MealsPage() {
                                 Carbs
                               </p>
                               <p className="font-semibold">
-                                {currentMeal.nutritionalInfo.carbs}
+                                {meal["dinner"][0].nutritionalInfo.carbs}
                               </p>
                             </div>
                             <div>
@@ -304,7 +312,7 @@ export default function MealsPage() {
                                 Fats
                               </p>
                               <p className="font-semibold">
-                                {currentMeal.nutritionalInfo.fats}
+                                {meal["dinner"][0].nutritionalInfo.fats}
                               </p>
                             </div>
                           </div>
@@ -313,7 +321,7 @@ export default function MealsPage() {
                       <div className="mt-6">
                         <h3 className="font-semibold mb-2">Instructions</h3>
                         <p className="text-muted-foreground">
-                          {currentMeal.instructions}
+                          {meal["dinner"][0].instructions}
                         </p>
                       </div>
                     </CardContent>
