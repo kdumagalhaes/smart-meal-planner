@@ -158,12 +158,11 @@ const mockMeals: Record<string, Meal[]> = {
   ]
 };
 
-export const getMealSuggestion = (mealTime: string): Promise<Meal> => {
+export const getMealSuggestion = (): Promise<Record<string, Meal[]>> => {
   return new Promise((resolve) => {
     setTimeout(() => {
-      const meals = mockMeals[mealTime] || mockMeals.snack;
-      const randomIndex = Math.floor(Math.random() * meals.length);
-      resolve(meals[randomIndex]);
+
+      resolve(mockMeals);
     }, 1000); // Simulate API delay
   });
 };
