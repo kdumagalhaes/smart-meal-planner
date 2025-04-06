@@ -1,18 +1,8 @@
 "use client";
 
-export interface Meal {
-  name: string;
-  calories: number;
-  ingredients: string[];
-  instructions: string;
-  nutritionalInfo: {
-    protein: string;
-    carbs: string;
-    fats: string;
-  };
-}
+import { Meal, MealRecord } from "../meals/constants/meals-constants";
 
-const mockMeals: Record<string, Meal[]> = {
+const mockMeals: MealRecord = {
   breakfast: [
     {
       name: "Greek Yogurt Parfait",
