@@ -2,10 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Utensils } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowLeft } from "lucide-react";
 import { getMealSuggestion } from "../services/meals";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MealRecord, MealTime } from "./constants/meals-constants";
 import MealTabs from "./ui/meal-tabs/meal-tabs";
 
