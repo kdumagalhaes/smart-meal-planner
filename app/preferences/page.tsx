@@ -11,6 +11,7 @@ import Link from "next/link";
 import { Toaster } from "@/components/ui/sonner";
 import { useRouter } from "next/navigation";
 import PreferencesButton from "./ui/preferences-button/preferences-button";
+import { Input } from "@/components/ui/input";
 
 export default function PreferencesPage() {
   const router = useRouter();
@@ -23,8 +24,12 @@ export default function PreferencesPage() {
       glutenFree: false,
       dairyFree: false,
       nutFree: false,
+      diabetic: false,
+      others: "",
     },
   });
+
+  const { others, ...restrictionsWithoutOthers } = preferences.restrictions;
 
   useEffect(() => {
     const savedCalories = localStorage.getItem("calories");
@@ -102,7 +107,7 @@ export default function PreferencesPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {Object.entries(preferences.restrictions).map(
+                {Object.entries(restrictionsWithoutOthers).map(
                   ([key, value]) => (
                     <div
                       key={key}
@@ -113,7 +118,7 @@ export default function PreferencesPage() {
                       </Label>
                       <Switch
                         id={key}
-                        checked={value}
+                        checked={!!value}
                         onCheckedChange={(checked) =>
                           setPreferences((prev) => ({
                             ...prev,
@@ -128,6 +133,21 @@ export default function PreferencesPage() {
                   )
                 )}
               </div>
+              <Label className="capitalize mb-3 mt-4">Others:</Label>
+              <Input
+                onChange={(e) =>
+                  setPreferences((prev) => ({
+                    ...prev,
+                    restrictions: {
+                      ...prev.restrictions,
+                      others: e.target.value,
+                    },
+                  }))
+                }
+                type="text"
+                value={others}
+                placeholder="Add specific restrictions like 'no sugar', 'low carb', etc..."
+              />
             </CardContent>
           </Card>
 
