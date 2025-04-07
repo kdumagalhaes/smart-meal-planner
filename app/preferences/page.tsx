@@ -86,6 +86,7 @@ export default function PreferencesPage() {
             </CardHeader>
             <CardContent>
               <Slider
+                disabled={isPushingRoute}
                 value={preferences.calories}
                 onValueChange={(value) =>
                   setPreferences((prev) => ({ ...prev, calories: value }))
@@ -117,6 +118,7 @@ export default function PreferencesPage() {
                         {key.replace(/([A-Z])/g, " $1").trim()}
                       </Label>
                       <Switch
+                        disabled={isPushingRoute}
                         id={key}
                         checked={!!value}
                         onCheckedChange={(checked) =>
@@ -135,6 +137,7 @@ export default function PreferencesPage() {
               </div>
               <Label className="capitalize mb-3 mt-4">Others:</Label>
               <Input
+                disabled={isPushingRoute}
                 onChange={(e) =>
                   setPreferences((prev) => ({
                     ...prev,
