@@ -26,8 +26,7 @@ export const getMealSuggestion = async (): Promise<MealRecord> => {
     }
 
     const data = await response.json();
-    console.log("data = ", data)
-    return data; // API returns an array of meals, we take the first one
+    return data; 
   } catch (error) {
     console.error('Error generating meal:', error);
     // Fallback to mock data if API fails
