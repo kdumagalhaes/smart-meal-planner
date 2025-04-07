@@ -6,12 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, Utensils } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { Toaster } from "@/components/ui/sonner";
+import { useRouter } from "next/navigation";
+import PreferencesButton from "./ui/preferences-button/preferences-button";
 
 export default function PreferencesPage() {
+  const router = useRouter();
+  const [isPushingRoute, setIsPushingRoute] = useState(false);
   const [preferences, setPreferences] = useState({
     calories: [1000],
     restrictions: {
@@ -26,7 +30,6 @@ export default function PreferencesPage() {
   useEffect(() => {
     const savedCalories = localStorage.getItem("calories");
     const savedRestrictions = localStorage.getItem("restrictions");
-    const savedMealTimes = localStorage.getItem("mealTimes");
 
     if (savedCalories) {
       setPreferences((prev) => ({
@@ -38,12 +41,6 @@ export default function PreferencesPage() {
       setPreferences((prev) => ({
         ...prev,
         restrictions: JSON.parse(savedRestrictions),
-      }));
-    }
-    if (savedMealTimes) {
-      setPreferences((prev) => ({
-        ...prev,
-        mealTimes: JSON.parse(savedMealTimes),
       }));
     }
   }, []);
@@ -58,6 +55,11 @@ export default function PreferencesPage() {
     );
 
     toast.success("Your preferences has been saved!");
+    setIsPushingRoute(true);
+    setTimeout(() => {
+      router.push("/meals");
+      setIsPushingRoute(false);
+    }, 2500);
   };
 
   return (
@@ -130,10 +132,7 @@ export default function PreferencesPage() {
             </CardContent>
           </Card>
 
-          <Button type="submit" className="w-full cursor-pointer">
-            <Save className="w-4 h-4 mr-2" />
-            Save Preferences
-          </Button>
+          <PreferencesButton isPushingRoute={isPushingRoute} />
         </form>
       </div>
       <Toaster />
