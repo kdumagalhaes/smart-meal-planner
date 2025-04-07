@@ -1,7 +1,40 @@
 "use client";
 
-import { Meal, MealRecord } from "../meals/constants/meals-constants";
+import {MealRecord } from "../meals/constants/meals-constants";
 
+export const getMealSuggestion = async (): Promise<MealRecord> => {
+  try {
+    const calories = localStorage.getItem("calories") || "2000";
+    const restrictions = localStorage.getItem("restrictions") || "{}";
+
+    const response = await fetch('/api/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        calories: parseInt(calories),
+        restrictions: Object.entries(JSON.parse(restrictions))
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          .filter(([_, value]) => value === true)
+          .map(([key]) => key)
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to generate meal suggestion');
+    }
+
+    const data = await response.json();
+    return data; 
+  } catch (error) {
+    console.error('Error generating meal:', error);
+    // Fallback to mock data if API fails
+    return fallbackMealSuggestion();
+  }
+};
+
+// Fallback mock data in case the API fails
 const mockMeals: MealRecord = {
   breakfast: [
     {
@@ -148,11 +181,7 @@ const mockMeals: MealRecord = {
   ]
 };
 
-export const getMealSuggestion = (): Promise<Record<string, Meal[]>> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
+const fallbackMealSuggestion = (): MealRecord => {
 
-      resolve(mockMeals);
-    }, 1000); // Simulate API delay
-  });
+  return mockMeals;
 };
