@@ -7,7 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { ArrowLeft, Save } from "lucide-react";
+import { toast } from "sonner";
 import Link from "next/link";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function PreferencesPage() {
   const [preferences, setPreferences] = useState({
@@ -54,6 +56,8 @@ export default function PreferencesPage() {
       "restrictions",
       JSON.stringify(preferences.restrictions)
     );
+
+    toast.success("Your preferences has been saved!");
   };
 
   return (
@@ -126,12 +130,13 @@ export default function PreferencesPage() {
             </CardContent>
           </Card>
 
-          <Button type="submit" className="w-full">
+          <Button type="submit" className="w-full cursor-pointer">
             <Save className="w-4 h-4 mr-2" />
             Save Preferences
           </Button>
         </form>
       </div>
+      <Toaster />
     </div>
   );
 }
